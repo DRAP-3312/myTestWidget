@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: ghcr.io/drap-3312/mytest:latest
+    networks:
+      - caddy
+    environment:
+      - PORT=80
+    deploy:
+      replicas: 1
+      labels:
+        caddy: 'mytest.saguarodrap.dev'
+        caddy.reverse_proxy: '{{upstreams 80}}'
+        caddy.tls: 'davidake117@gmail.com'
+
+networks:
+  caddy:
+    external: true
