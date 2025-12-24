@@ -17,7 +17,13 @@ const { widgetConfig, showModal, saveConfig, openConfigModal } =
         : 'bg-linear-to-br from-gray-50 via-gray-100 to-gray-200 text-gray-900',
     ]"
   >
-    <ConfigModal v-if="showModal" :isDark="isDark" @apply="saveConfig" />
+    <ConfigModal
+      v-if="showModal"
+      :isDark="isDark"
+      :hasExistingConfig="!!widgetConfig"
+      @apply="saveConfig"
+      @close="showModal = false"
+    />
 
     <header
       :class="[
@@ -119,10 +125,11 @@ const { widgetConfig, showModal, saveConfig, openConfigModal } =
       ]"
     >
       <div class="text-center mb-12 animate-fade-in">
-        <h2 class="text-5xl font-bold mb-4 drop-shadow-lg">Prueba tu Widget</h2>
+        <h2 class="text-5xl font-bold mb-4 drop-shadow-lg">
+          Entorno de prueba
+        </h2>
         <p class="text-xl opacity-90 max-w-2xl mx-auto">
-          Experimenta con diferentes configuraciones y visualiza los cambios al
-          instante
+          Realiza prueba al widget que necesites.
         </p>
       </div>
 
@@ -142,7 +149,6 @@ const { widgetConfig, showModal, saveConfig, openConfigModal } =
 </template>
 
 <style>
-
 @keyframes fade-in {
   from {
     opacity: 0;

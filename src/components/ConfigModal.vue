@@ -3,10 +3,12 @@ import { ref } from "vue";
 
 const props = defineProps<{
   isDark: boolean;
+  hasExistingConfig?: boolean;
 }>();
 
 const emit = defineEmits<{
   (e: "apply", config: WidgetConfig): void;
+  (e: "close"): void;
 }>();
 
 export interface WidgetConfig {
@@ -93,18 +95,53 @@ const applyConfiguration = async () => {
 
   emit("apply", config);
 };
+
+const handleBackdropClick = () => {
+  if (props.hasExistingConfig) {
+    emit("close");
+  }
+};
 </script>
 
 <template>
   <div
+    @click="handleBackdropClick"
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
   >
     <div
+      @click.stop
       :class="[
-        'w-full max-w-2xl mx-4 rounded-2xl shadow-2xl p-8 animate-slide-up',
+        'w-full max-w-2xl mx-4 rounded-2xl shadow-2xl p-8 animate-slide-up relative',
         isDark ? 'bg-gray-800' : 'bg-white',
       ]"
     >
+      <!-- Botón de cerrar (solo si hay configuración existente) -->
+      <button
+        v-if="hasExistingConfig"
+        @click="emit('close')"
+        :class="[
+          'absolute top-4 right-4 p-2 rounded-full transition-all hover:scale-110',
+          isDark
+            ? 'hover:bg-gray-700 text-gray-400 hover:text-white'
+            : 'hover:bg-gray-200 text-gray-600 hover:text-gray-900',
+        ]"
+        title="Cerrar"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
       <div v-if="isSuccess" class="text-center py-8">
         <div class="mb-6 flex justify-center">
           <svg
