@@ -67,7 +67,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: '.deploy/deploy-stack.yml'
-          target: '/home/${{ secrets.VPS_USER }}/workspace/mytest/'
+          target: '/home/${{ secrets.VPS_USER }}/workspace/mytestwidget/'
 
       - name: Deploy to Server
         uses: appleboy/ssh-action@v1.0.0
@@ -76,13 +76,13 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /home/${{ secrets.VPS_USER }}/workspace/mytest
+            cd /home/${{ secrets.VPS_USER }}/workspace/mytestwidget
 
             echo ">>> Pulling latest Docker image..."
             docker pull ghcr.io/${{ steps.repo_name_lowercase_deploy.outputs.repo_lowercase }}:latest
 
             echo ">>> Deploying Docker stack..."
-            docker stack deploy -c .deploy/deploy-stack.yml mytest-app
+            docker stack deploy -c .deploy/deploy-stack.yml mytestwidget-app
 
             echo ">>> Waiting for service update (10 seconds)..."
             sleep 10

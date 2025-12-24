@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   frontend:
-    image: ghcr.io/drap-3312/mytest:latest
+    image: ghcr.io/drap-3312/mytestwidget:latest
     networks:
       - caddy
     environment:
