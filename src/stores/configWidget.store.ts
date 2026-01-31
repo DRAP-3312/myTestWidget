@@ -13,6 +13,8 @@ export const useConfigWidgetStore = defineStore("config-widget", () => {
     },
   });
 
+  const objectLiteral = useLocalStorage<string>("object-literal", "");
+
   const modalOpen = ref(false);
 
   const showModal = computed(
@@ -20,8 +22,9 @@ export const useConfigWidgetStore = defineStore("config-widget", () => {
   );
   const hasConfig = computed(() => widgetConfig.value !== null);
 
-  function saveConfig(config: WidgetConfig) {
+  function saveConfig(config: WidgetConfig, objectLit: string) {
     widgetConfig.value = config;
+    objectLiteral.value = objectLit;
     modalOpen.value = false;
   }
 
@@ -46,5 +49,6 @@ export const useConfigWidgetStore = defineStore("config-widget", () => {
     openConfigModal,
     closeConfigModal,
     clearConfig,
+    objectLiteral,
   };
 });
