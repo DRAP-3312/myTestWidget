@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "pinia": "^3.0.4",
     "vue": "^3.5.24",
     "vue-chat-widget-drap": "^2.6.4"
   },
