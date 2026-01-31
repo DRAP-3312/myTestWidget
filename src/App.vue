@@ -4,7 +4,7 @@ import { useWidgetConfig } from "./composables/useWidgetConfig";
 import ConfigModal from "./components/ConfigModal.vue";
 
 const { isDark, toggleTheme } = useTheme();
-const { widgetConfig, showModal, saveConfig, openConfigModal } =
+const { widgetConfig, showModal, saveConfig, openConfigModal, closeConfigModal } =
   useWidgetConfig();
 </script>
 
@@ -22,7 +22,7 @@ const { widgetConfig, showModal, saveConfig, openConfigModal } =
       :isDark="isDark"
       :hasExistingConfig="!!widgetConfig"
       @apply="saveConfig"
-      @close="showModal = false"
+      @close="closeConfigModal"
     />
 
     <header

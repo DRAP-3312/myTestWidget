@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import type { WidgetConfig } from "../composables/useWidgetConfig";
 
 const props = defineProps<{
   isDark: boolean;
@@ -10,15 +11,6 @@ const emit = defineEmits<{
   (e: "apply", config: WidgetConfig): void;
   (e: "close"): void;
 }>();
-
-export interface WidgetConfig {
-  socketUrl: string;
-  idAgent: string;
-  apiKey: string;
-  nameSpace: string;
-  gaTrackingId: string;
-  instanceName: string;
-}
 
 const widgetCode = ref("");
 const errorMessage = ref("");
