@@ -1,12 +1,18 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { useLocalStorage } from "@vueuse/core";
-import type { WidgetConfig } from "../composables/useWidgetConfig";
+import type { WidgetConfig } from "../interfaces/chat-widget.interfaces";
 
 const STORAGE_KEY = "vue-chat-widget-config";
 
 export const useConfigWidgetStore = defineStore("config-widget", () => {
-  const widgetConfig = useLocalStorage<WidgetConfig | null>(STORAGE_KEY, null);
+  const widgetConfig = useLocalStorage<WidgetConfig | null>(STORAGE_KEY, null, {
+    serializer: {
+      read: (v) => (v ? JSON.parse(v) : null),
+      write: (v) => JSON.stringify(v),
+    },
+  });
+
   const modalOpen = ref(false);
 
   const showModal = computed(

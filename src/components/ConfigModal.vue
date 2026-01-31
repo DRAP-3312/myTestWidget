@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import type { WidgetConfig } from "../composables/useWidgetConfig";
+import type { WidgetConfig } from "../interfaces/chat-widget.interfaces";
 
 const props = defineProps<{
   isDark: boolean;

@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { useTheme } from "./composables/useTheme";
-import { useWidgetConfig } from "./composables/useWidgetConfig";
 import ConfigModal from "./components/ConfigModal.vue";
+import { useConfigWidgetStore } from "./stores/configWidget.store";
+import { storeToRefs } from "pinia";
 
 const { isDark, toggleTheme } = useTheme();
-const { widgetConfig, showModal, saveConfig, openConfigModal, closeConfigModal } =
-  useWidgetConfig();
+const cwStore = useConfigWidgetStore();
+const { showModal, widgetConfig } = storeToRefs(cwStore);
 </script>
 
 <template>
@@ -21,8 +22,8 @@ const { widgetConfig, showModal, saveConfig, openConfigModal, closeConfigModal }
       v-if="showModal"
       :isDark="isDark"
       :hasExistingConfig="!!widgetConfig"
-      @apply="saveConfig"
-      @close="closeConfigModal"
+      @apply="cwStore.saveConfig"
+      @close="cwStore.closeConfigModal"
     />
 
     <header
@@ -41,7 +42,7 @@ const { widgetConfig, showModal, saveConfig, openConfigModal, closeConfigModal }
         <div class="flex items-center gap-4">
           <button
             v-if="widgetConfig"
-            @click="openConfigModal"
+            @click="cwStore.openConfigModal"
             :class="[
               'p-3 rounded-full transition-all duration-300 hover:scale-110',
               isDark
