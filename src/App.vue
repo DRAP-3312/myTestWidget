@@ -3,6 +3,7 @@ import { useTheme } from "./composables/useTheme";
 import ConfigModal from "./components/ConfigModal.vue";
 import { useConfigWidgetStore } from "./stores/configWidget.store";
 import { storeToRefs } from "pinia";
+import { ChatWidget } from "virture-chat-live";
 
 const { isDark, toggleTheme } = useTheme();
 const cwStore = useConfigWidgetStore();
@@ -135,15 +136,15 @@ const { showModal, widgetConfig } = storeToRefs(cwStore);
       </div>
 
       <div v-if="widgetConfig" class="w-full flex justify-center items-center">
-        <vue-chat-widget
+        <ChatWidget
           :key="`${widgetConfig.socketUrl}-${widgetConfig.idAgent}`"
-          :socketUrl="widgetConfig.socketUrl"
-          :idAgent="widgetConfig.idAgent"
-          :api_key="widgetConfig.apiKey"
-          :nameSpace="widgetConfig.nameSpace"
-          :gaTrackingId="widgetConfig.gaTrackingId"
-          :instanceName="widgetConfig.instanceName"
-        ></vue-chat-widget>
+          :socket-url="widgetConfig.socketUrl"
+          :id-agent="widgetConfig.idAgent"
+          :api-key="widgetConfig.apiKey"
+          :name-space="widgetConfig.nameSpace"
+          :instance-name="widgetConfig.instanceName"
+          :gaTrackingId="''"
+        />
       </div>
     </main>
   </div>
