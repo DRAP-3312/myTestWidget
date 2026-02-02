@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import type { WidgetConfig } from "../interfaces/chat-widget.interfaces";
+import {
+  parseWidgetCodeUtil,
+  placeholderExample,
+} from "../utils/parseConfigWidget.util";
+import { useConfigWidgetStore } from "../stores/configWidget.store";
+import { storeToRefs } from "pinia";
 
 const props = defineProps<{
   isDark: boolean;
@@ -7,65 +14,16 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "apply", config: WidgetConfig): void;
+  (e: "apply", config: WidgetConfig, obj: string): void;
   (e: "close"): void;
 }>();
 
-export interface WidgetConfig {
-  socketUrl: string;
-  idAgent: string;
-  apiKey: string;
-  nameSpace: string;
-  gaTrackingId: string;
-  instanceName: string;
-}
-
+const widgetStore = useConfigWidgetStore();
+const { objectLiteral } = storeToRefs(widgetStore);
 const widgetCode = ref("");
 const errorMessage = ref("");
 const isSuccess = ref(false);
 const isProcessing = ref(false);
-
-const parseWidgetCode = (code: string): WidgetConfig | null => {
-  try {
-    const socketUrlMatch = code.match(/\.socketUrl=["'](.+?)["']/);
-    const socketUrl = socketUrlMatch
-      ? socketUrlMatch[1]?.replace(/'/g, "")
-      : "";
-
-    const idAgentMatch = code.match(/idAgent=["'](.+?)["']/);
-    const idAgent = idAgentMatch ? idAgentMatch[1] : "";
-
-    const apiKeyMatch = code.match(/api_key=["'](.+?)["']/);
-    const apiKey = apiKeyMatch ? apiKeyMatch[1] : "";
-
-    const nameSpaceMatch = code.match(/nameSpace=["'](.+?)["']/);
-    const nameSpace = nameSpaceMatch ? nameSpaceMatch[1] : "";
-
-    const gaTrackingIdMatch = code.match(/\.gaTrackingId=["'](.+?)["']/);
-    const gaTrackingId = gaTrackingIdMatch
-      ? gaTrackingIdMatch[1]?.replace(/'/g, "")
-      : "";
-
-    const instanceNameMatch = code.match(/instanceName=["'](.+?)["']/);
-    const instanceName = instanceNameMatch ? instanceNameMatch[1] : "";
-
-    // Validar que se extrajeron los campos obligatorios
-    if (!socketUrl || !idAgent || !apiKey || !nameSpace || !instanceName) {
-      return null;
-    }
-
-    return {
-      socketUrl,
-      idAgent,
-      apiKey,
-      nameSpace,
-      gaTrackingId: gaTrackingId || "",
-      instanceName,
-    };
-  } catch (error) {
-    return null;
-  }
-};
 
 const applyConfiguration = async () => {
   errorMessage.value = "";
@@ -79,7 +37,7 @@ const applyConfiguration = async () => {
     return;
   }
 
-  const config = parseWidgetCode(widgetCode.value);
+  const config = parseWidgetCodeUtil(widgetCode.value);
 
   if (!config) {
     errorMessage.value =
@@ -93,7 +51,7 @@ const applyConfiguration = async () => {
 
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
-  emit("apply", config);
+  emit("apply", config, widgetCode.value);
 };
 
 const handleBackdropClick = () => {
@@ -101,6 +59,12 @@ const handleBackdropClick = () => {
     emit("close");
   }
 };
+
+onMounted(() => {
+  if (objectLiteral) {
+    widgetCode.value = objectLiteral.value;
+  }
+});
 </script>
 
 <template>
@@ -180,14 +144,7 @@ const handleBackdropClick = () => {
             <textarea
               v-model="widgetCode"
               rows="12"
-              placeholder='<vue-chat-widget
-  .socketUrl="&apos;https://ejemplo.com&apos;"
-  idAgent="abc123def456"
-  api_key="tu_api_key_aqui"
-  nameSpace="/chat"
-  .gaTrackingId="&apos;&apos;"
-  instanceName="Mi Empresa"
-></vue-chat-widget>'
+              :placeholder="placeholderExample"
               :class="[
                 'w-full px-4 py-3 rounded-lg border-2 transition-all font-mono text-sm resize-none',
                 isDark
@@ -237,7 +194,7 @@ const handleBackdropClick = () => {
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               ></path>
             </svg>
-            <span>{{ isProcessing ? "Validando..." : "Iniciar Widget" }}</span>
+            <span>{{ isProcessing ? "Validando..." : "Cargar Widget" }}</span>
           </button>
         </form>
       </div>

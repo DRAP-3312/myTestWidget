@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { useTheme } from "./composables/useTheme";
-import { useWidgetConfig } from "./composables/useWidgetConfig";
 import ConfigModal from "./components/ConfigModal.vue";
+import { useConfigWidgetStore } from "./stores/configWidget.store";
+import { storeToRefs } from "pinia";
+import { ChatWidget } from "virture-chat-live";
 
 const { isDark, toggleTheme } = useTheme();
-const { widgetConfig, showModal, saveConfig, openConfigModal } =
-  useWidgetConfig();
+const cwStore = useConfigWidgetStore();
+const { showModal, widgetConfig } = storeToRefs(cwStore);
 </script>
 
 <template>
@@ -21,8 +23,8 @@ const { widgetConfig, showModal, saveConfig, openConfigModal } =
       v-if="showModal"
       :isDark="isDark"
       :hasExistingConfig="!!widgetConfig"
-      @apply="saveConfig"
-      @close="showModal = false"
+      @apply="cwStore.saveConfig"
+      @close="cwStore.closeConfigModal"
     />
 
     <header
@@ -41,7 +43,7 @@ const { widgetConfig, showModal, saveConfig, openConfigModal } =
         <div class="flex items-center gap-4">
           <button
             v-if="widgetConfig"
-            @click="openConfigModal"
+            @click="cwStore.openConfigModal"
             :class="[
               'p-3 rounded-full transition-all duration-300 hover:scale-110',
               isDark
@@ -134,15 +136,15 @@ const { widgetConfig, showModal, saveConfig, openConfigModal } =
       </div>
 
       <div v-if="widgetConfig" class="w-full flex justify-center items-center">
-        <vue-chat-widget
+        <ChatWidget
           :key="`${widgetConfig.socketUrl}-${widgetConfig.idAgent}`"
-          :socketUrl="widgetConfig.socketUrl"
-          :idAgent="widgetConfig.idAgent"
-          :api_key="widgetConfig.apiKey"
-          :nameSpace="widgetConfig.nameSpace"
-          :gaTrackingId="widgetConfig.gaTrackingId"
-          :instanceName="widgetConfig.instanceName"
-        ></vue-chat-widget>
+          :socket-url="widgetConfig.socketUrl"
+          :id-agent="widgetConfig.idAgent"
+          :api-key="widgetConfig.apiKey"
+          :name-space="widgetConfig.nameSpace"
+          :instance-name="widgetConfig.instanceName"
+          :gaTrackingId="''"
+        />
       </div>
     </main>
   </div>
